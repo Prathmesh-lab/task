@@ -69,20 +69,20 @@ def remove_angular_module(project_path: str, module_name: str):
             rf"import\s+{{[^}}]+}}\s+from\s+['\"]\.\/{module_name}\/[^'\"]+['\"];",
             "",
             content,
+            flags=re.IGNORECASE,
         )
 
-        # Remove the module route
+        # Remove the module route block
         content = re.sub(
-            rf"\s*{{\s*path:\s*'{module_name}',\s*loadChildren:\s*\(\)\s*=>\s*import\(['\"]\.\/{module_name}\/[^'\"]+['\"]\)\.then\(m\s*=>\s*m\.[^}}]+}},",
+            rf"\s*{{\s*path:\s*'{module_name}',\s*loadChildren:\s*\(\)\s*=>\s*[^}}]+}},?",
             "",
             content,
+            flags=re.IGNORECASE,
         )
 
         # Remove any other references to the module
         content = re.sub(
-            rf"['\"]\.\/{module_name}\/[^'\"]+['\"]",
-            "",
-            content,
+            rf"['\"]\.\/{module_name}\/[^'\"]+['\"]", "", content, flags=re.IGNORECASE
         )
 
         with open(app_routing_module_path, "w") as file:
@@ -101,13 +101,12 @@ def remove_angular_module(project_path: str, module_name: str):
                     rf"import\s+{{[^}}]+}}\s+from\s+['\"]\.\/{module_name}\/[^'\"]+['\"];",
                     "",
                     content,
+                    flags=re.IGNORECASE,
                 )
 
                 # Remove the module from NgModule imports
                 content = re.sub(
-                    rf"{module_name}Module,?",
-                    "",
-                    content,
+                    rf"{module_name}Module,?", "", content, flags=re.IGNORECASE
                 )
 
                 # Remove any other references to the module
@@ -115,6 +114,15 @@ def remove_angular_module(project_path: str, module_name: str):
                     rf"['\"]\.\/{module_name}\/[^'\"]+['\"]",
                     "",
                     content,
+                    flags=re.IGNORECASE,
+                )
+
+                # Remove the module route block
+                content = re.sub(
+                    rf"\s*{{\s*path:\s*'{module_name}',\s*loadChildren:\s*\(\)\s*=>\s*[^}}]+}},?",
+                    "",
+                    content,
+                    flags=re.IGNORECASE,
                 )
 
                 with open(file_path, "w") as file:
